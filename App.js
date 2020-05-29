@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useReducer, useMemo} from 'react';
+import React, { useState, useEffect, useReducer, useMemo, useCallback } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
 // useReducer 
@@ -7,27 +7,27 @@ const initialState = {
 };
 const reducer = (state, action) => {
   switch (action.type) {
-    case 'increase':{
-      return { count : state.count + 9 }
+    case 'increase': {
+      return { count: state.count + 9 }
     }
     case 'decrease': {
-      return { count : state.count - 9 }
+      return { count: state.count - 9 }
     }
     default: {
       return state;
-    } 
+    }
   }
 };
 
 // useMemo
 const population = [
-  {name: 'James', age: 28}, 
-  {name: 'Maria', age: 64},
-  {name: 'Amy', age: 35}, 
-  {name: 'Sam', age: 42},
-  {name: 'Tommas', age: 38},
-  {name: 'Michael', age: 67},
-  {name: 'Jhon', age: 40}
+  { name: 'James', age: 28 },
+  { name: 'Maria', age: 64 },
+  { name: 'Amy', age: 35 },
+  { name: 'Sam', age: 42 },
+  { name: 'Tommas', age: 38 },
+  { name: 'Michael', age: 67 },
+  { name: 'Jhon', age: 40 }
 ];
 
 export default function App() {
@@ -41,23 +41,29 @@ export default function App() {
   const totalAge = useMemo(() => {
     console.log('Calculating total...');
     let age = 0;
-    population.forEach( x => {
+    population.forEach(x => {
       age += x.age;
     });
-
     return age;
   }, [population]);
   const averageAge = useMemo(() => {
     console.log('Calculating average...');
-    let countPopul = population.length; 
-    return (totalAge/countPopul).toFixed();
+    let countPopul = population.length;
+    return (totalAge / countPopul).toFixed();
   }, [population]);
 
-  const incrementNumber = async () => setCount(count + 1)
+  // useCallback
+  const increaseNumber = useCallback(() => {
+    setCount(count + 1)
+  },[count]);
+  const decreaseNumber = useCallback(() => {
+    setCount(count -1)
+  }, [count]);
+
   // useEffect example
-  useEffect( () => {
+  useEffect(() => {
     fetchUsers();
-  },[]);
+  }, []);
 
   const fetchUsers = async () => {
     const res = await fetch('https://jsonplaceholder.typicode.com/users');
@@ -65,31 +71,35 @@ export default function App() {
     setUsers(json);
     setLoading(false);
   };
-  
+
   return (
     <View style={styles.container}>
       <>
-      <Text 
-      style={styles.textName}
-      >
-        {loading === true ? 'Loading...' : 'Users: ' + users.map(u => ' ' + u.name)}
-      </Text>
-      <Text 
-      style={styles.textCount}
-      onPress={incrementNumber}
-      >
-        {count} ⬆️1️⃣
-      </Text>
+        <Text
+          style={styles.textName}
+        > {loading === true ? 'Loading...' : 'Users: ' + users.map(u => ' ' + u.name)}
+        </Text>
+        <View style={styles.viewCallBack}>
+          <Text
+            style={styles.textCount}
+            onPress={decreaseNumber}
+          > ⬇️1️⃣</Text>
+          <Text style={styles.textCount}>{count}</Text>
+          <Text
+            style={styles.textCount}
+            onPress={increaseNumber}
+          > ⬆️1️⃣</Text>
+        </View>
       </>
       <View style={styles.viewReducer}>
-        <Text 
-        style={styles.textCountReducer}
-        onPress={() => dispach({type:'increase' })}
+        <Text
+          style={styles.textCountReducer}
+          onPress={() => dispach({ type: 'increase' })}
         > ⬆️9️⃣</Text>
         <Text style={styles.textCountReducer}>{state.count}</Text>
-        <Text 
-        style={styles.textCountReducer}
-        onPress={() => dispach({type:'decrease'})}
+        <Text
+          style={styles.textCountReducer}
+          onPress={() => dispach({ type: 'decrease' })}
         > ⬇️9️⃣</Text>
       </View>
       <View>
@@ -107,6 +117,9 @@ const styles = StyleSheet.create({
     backgroundColor: '#CCC',
     alignItems: 'center',
     justifyContent: 'space-evenly',
+  },
+  viewCallBack: {
+    flexDirection: 'row',
   },
   textName: {
     fontSize: 24,
@@ -128,5 +141,5 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderColor: '#ccc',
     padding: 8,
-  }
+  },
 });
