@@ -19,7 +19,6 @@ const reducer = (state, action) => {
   }
 };
 
-// useMemo
 const population = [
   { name: 'James', age: 28 },
   { name: 'Maria', age: 64 },
@@ -114,7 +113,7 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#CCC',
+    backgroundColor: '#ccc',
     alignItems: 'center',
     justifyContent: 'space-evenly',
   },
